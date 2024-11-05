@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RigidbodyMovement : MonoBehaviour
@@ -19,12 +18,19 @@ public class RigidbodyMovement : MonoBehaviour
     [SerializeField] private float Speed; // Movement speed
     [SerializeField] private float Sensitivity; // Mouse sensitivity for looking around
     [SerializeField] private float JumpForce; // Force applied for jumping
+    [SerializeField] private float GravityIntensity = 9.81f; // Custom gravity intensity
+
+    private bool isGrounded;
+    private float originalSpeed; // Store the original speed
 
     private void Start()
     {
         // Lock the cursor and hide it
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Initialize the original speed
+        originalSpeed = Speed;
     }
 
     private void Update()
@@ -46,15 +52,20 @@ public class RigidbodyMovement : MonoBehaviour
         // Apply movement while preserving the player's current vertical velocity (for jumping)
         PlayerBody.velocity = new Vector3(MoveVector.x, PlayerBody.velocity.y, MoveVector.z);
 
-        // Jump if space is pressed and the player is grounded (using Physics.CheckSphere)
-        if (Input.GetKeyDown(KeyCode.Space))
+        // Check if the player is grounded
+        isGrounded = Physics.CheckSphere(FeetTransform.position, 0.1f, FloorMask);
+
+        // Jump if space is pressed and the player is grounded
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            // Check if the player's feet are grounded (using a small sphere at the feet)
-            if (Physics.CheckSphere(FeetTransform.position, 0.1f, FloorMask))
-            {
-                // Apply an upward force to make the player jump
-                PlayerBody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-            }
+            // Apply an upward force to make the player jump
+            PlayerBody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        }
+
+        // Apply custom gravity if the player is not grounded
+        if (!isGrounded)
+        {
+            PlayerBody.AddForce(Vector3.down * GravityIntensity, ForceMode.Acceleration);
         }
     }
 
@@ -68,5 +79,14 @@ public class RigidbodyMovement : MonoBehaviour
 
         // Apply vertical camera rotation (pitch), clamping it to prevent extreme angles
         PlayerCamera.transform.localRotation = Quaternion.Euler(xRot, 0f, 0f);
+    }
+
+    // Coroutine for Speed Boost
+    public IEnumerator SpeedBoost(float amount, float duration)
+    {
+        Speed += amount; // Increase speed by the specified amount
+        yield return new WaitForSeconds(duration); // Wait for the boost duration
+        Speed = originalSpeed; // Revert to the original speed
+        Debug.Log("Speed boost ended. Player's speed reverted to " + originalSpeed);
     }
 }
