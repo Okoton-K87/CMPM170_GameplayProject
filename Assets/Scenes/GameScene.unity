@@ -3603,7 +3603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7481a95a773677946a797c3e30291a8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 8037816454215056125, guid: 388a1555865a0704db3ba6d947786c53, type: 3}
+  enemyPrefab: {fileID: 2621045091831944361, guid: 9630006983eb2b4419f08c4d5b7227c5, type: 3}
   enemiesPerWave: 20
   timeBetweenEnemies: 0.1
   timeBetweenWaves: 3
