@@ -9,6 +9,8 @@ public class HealthScript : MonoBehaviour
 
     [SerializeField] private GameObject lootBoxPrefab; // Reference to the loot box prefab
 
+    private float healthDrainTimer = 0f; // Timer for health drain
+
     void Start()
     {
         // Set starting health from GameSettings if available
@@ -17,6 +19,12 @@ public class HealthScript : MonoBehaviour
 
         // Find ScoreManager in the scene
         scoreManager = FindObjectOfType<ScoreManager>();
+    }
+
+    void Update()
+    {
+        // Gradually decrease health over time
+        GradualHealthDrain();
     }
 
     public void TakeDamage(int damage)
@@ -29,6 +37,7 @@ public class HealthScript : MonoBehaviour
             Die();
         }
     }
+
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
@@ -40,7 +49,6 @@ public class HealthScript : MonoBehaviour
         currentHealth = maxHealth;
         Debug.Log("Player's health fully restored. Current health: " + currentHealth);
     }
-
 
     public int GetCurrentHealth()
     {
@@ -103,4 +111,16 @@ public class HealthScript : MonoBehaviour
         }
     }
 
+    void GradualHealthDrain()
+    {
+        // Increment the timer
+        healthDrainTimer += Time.deltaTime;
+
+        // Reduce health by 1 every second
+        if (healthDrainTimer >= 1f)
+        {
+            TakeDamage(1);
+            healthDrainTimer = 0f;
+        }
+    }
 }
