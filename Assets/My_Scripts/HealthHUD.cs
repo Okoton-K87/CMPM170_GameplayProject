@@ -19,6 +19,6 @@ public class HealthHUD : MonoBehaviour
         // Update the slider and text based on the player's current health
         healthSlider.maxValue = playerHealth.maxHealth;
         healthSlider.value = playerHealth.GetCurrentHealth();
-        healthText.text = "Health: " + playerHealth.GetCurrentHealth();
+        healthText.text = "Battery: " + playerHealth.GetCurrentHealth();
     }
 }
